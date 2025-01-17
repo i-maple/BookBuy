@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace CRUD_App.Models
+namespace CRUDApp.Models
 {
     public class CategoryModel
     {

@@ -1,4 +1,4 @@
-﻿using CRUD_App.Models;
+﻿using CRUDApp.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRUD_App.Data
@@ -10,5 +10,6 @@ namespace CRUD_App.Data
         }
 
         public DbSet<CategoryModel> Categories { get; set; }
+        public DbSet<CoverType> CoverTypes { get; set; }
     }
 }

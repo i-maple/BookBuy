@@ -1,21 +1,22 @@
 ﻿using CRUD_App.Data;
-using CRUD_App.Models;
+using CRUDApp.Data.Repository.IRepository;
+using CRUDApp.Models;
+using CRUDAppWeb.Data.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CRUD_App.Controllers
+namespace CRUD_App.Areas.Admin.Controllers
 {
     public class CategoryController : Controller
     {
 
-        private readonly ApplicationDbContext _db;
-        public CategoryController(ApplicationDbContext db)
-        {   
-            _db = db;
+        private IUnitOfWork unitOfWork;
+        public CategoryController(IUnitOfWork unit)
+        {
+            unitOfWork = unit;
         }
         public IActionResult Index()
         {
-            IEnumerable<CategoryModel> categoriesList =  _db.Categories;
-            return View(categoriesList);
+            return View(unitOfWork.Category.GetAll());
         }
 
         public IActionResult Create()
@@ -27,27 +28,27 @@ namespace CRUD_App.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(CategoryModel category)
         {
-            if(category.Name == category.DisplayOrder.ToString())
+            if (category.Name == category.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("SameNameError", "Category Name shouldn't be same as Display Order");
             }
             if (ModelState.IsValid)
             {
 
-            _db.Categories.Add(category);
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+                unitOfWork.Category.Add(category);
+                unitOfWork.Save();
+                return RedirectToAction("Index");
             }
             return View(category);
         }
         public IActionResult Edit(int? id)
         {
-            if(id == 0 || id == null)
+            if (id == 0 || id == null)
             {
                 return NotFound();
             }
-            var dbFromCategory = _db.Categories.Find(id);
-            if(dbFromCategory == null)
+            var dbFromCategory = unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            if (dbFromCategory == null)
             {
                 return NotFound();
             }
@@ -58,14 +59,14 @@ namespace CRUD_App.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(CategoryModel model)
         {
-            if(model.Name == model.DisplayOrder.ToString())
+            if (model.Name == model.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("SameNameError", "Display Order and Name cannot be same");
             }
             if (ModelState.IsValid)
             {
-                _db.Categories.Update(model);
-                _db.SaveChanges();
+                unitOfWork.Category.Update(model);
+                unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             return View();
@@ -73,12 +74,12 @@ namespace CRUD_App.Controllers
 
         public IActionResult Delete(int? id)
         {
-            var categoryFromDb = _db.Categories.Find(id);
-            if(id == null || id == 0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-            if(categoryFromDb == null)
+            var categoryFromDb = unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            if (categoryFromDb == null)
             {
                 return NotFound();
             }
@@ -89,13 +90,13 @@ namespace CRUD_App.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePOST(int? id)
         {
-            var categoryFromDb = _db.Categories.Find(id);
+            var categoryFromDb = unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
             if (categoryFromDb == null)
             {
                 return NotFound();
             }
-            _db.Categories.Remove(categoryFromDb);
-            _db.SaveChanges();
+            unitOfWork.Category.Delete(categoryFromDb);
+            unitOfWork.Save();
             return RedirectToAction("Index");
         }
 

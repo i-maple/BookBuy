@@ -1,4 +1,4 @@
-namespace CRUD_App.Models
+namespace CRUDApp.Models
 {
     public class ErrorViewModel
     {

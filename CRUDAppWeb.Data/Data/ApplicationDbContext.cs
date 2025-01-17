@@ -11,5 +11,6 @@ namespace CRUD_App.Data
 
         public DbSet<CategoryModel> Categories { get; set; }
         public DbSet<CoverType> CoverTypes { get; set; }
+        public DbSet<Product> Product { get; set; }
     }
 }

@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUDAppWeb", "CRUD App\CRUDAppWeb.csproj", "{97B6F63B-7042-4F33-84C3-5DE2EA1E25D6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{16C60950-1AE5-4704-A1C0-A1D4FD393A92} = {16C60950-1AE5-4704-A1C0-A1D4FD393A92}
+		{3288E345-D811-4B51-B932-9F1D9A81DA22} = {3288E345-D811-4B51-B932-9F1D9A81DA22}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CRUDApp.Data", "CRUDAppWeb.Data\CRUDApp.Data.csproj", "{41091707-28CC-400C-B54F-DD5A4DA11C42}"
 EndProject

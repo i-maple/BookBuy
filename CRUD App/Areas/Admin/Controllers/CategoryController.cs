@@ -1,4 +1,4 @@
-﻿using CRUD_App.Data;
+﻿using CRUDApp.Data;
 using CRUDApp.Data.Repository.IRepository;
 using CRUDApp.Models;
 using CRUDAppWeb.Data.Repository.IRepository;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CRUD_App.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
 

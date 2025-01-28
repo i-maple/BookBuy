@@ -1,0 +1,41 @@
+﻿@model Company
+@{
+
+}
+
+<form method="post" asp-action="Edit">
+	<div class="border p-3 mt-4">
+		@* <div asp-validation-summary="All"></div> *@
+		<h2 class="text-white">Edit Category</h2>
+		<div class="mb-3">
+			<label asp-for="Name"></label>
+			<input type="text" asp-for="Name" class="form-control" />
+			<span asp-validation-for="Name" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="City"></label>
+			<input type="text" asp-for="City" class="form-control" />
+			<span asp-validation-for="City" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="State"></label>
+			<input type="text" asp-for="State" class="form-control" />
+			<span asp-validation-for="State" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="PostalCode"></label>
+			<input type="text" asp-for="PostalCode" class="form-control" />
+			<span asp-validation-for="PostalCode" class="text-danger"></span>
+		</div><div class="mb-3">
+			<label asp-for="StreetAddress"></label>
+			<input type="text" asp-for="StreetAddress" class="form-control" />
+			<span asp-validation-for="StreetAddress" class="text-danger"></span>
+		</div><div class="mb-3">
+			<label asp-for="PhoneNumber"></label>
+			<input type="text" asp-for="PhoneNumber" class="form-control" />
+			<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+		</div>
+		<button type="submit" class="btn btn-primary">Update</button>
+		<a asp-controller="Category" asp-action="Index" class="btn btn-secondary">Go Back</a>
+	</div>
+</form>

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CRUD_App.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CoverTypeController : Controller
     {
         public IUnitOfWork unitOfWork;

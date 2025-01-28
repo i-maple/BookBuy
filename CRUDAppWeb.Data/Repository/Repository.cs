@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using CRUD_App.Data;
+using CRUDApp.Data;
 using CRUDAppWeb.Data.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,15 +35,29 @@ namespace CRUDAppWeb.Data.Repository
             dbSet.RemoveRange(entities);
         }
 
-        IEnumerable<T> IRepository<T>.GetAll()
+        IEnumerable<T> IRepository<T>.GetAll(string? includeProperties)
         {
             IQueryable<T> query = dbSet;
-            return dbSet;
+            if (includeProperties != null)
+            {
+                foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
+            return query;
         }
 
-        T IRepository<T>.GetFirstOrDefault(Expression<Func<T, bool>> filter)
+        T IRepository<T>.GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties)
         {
             IQueryable<T> query = dbSet;
+            if (includeProperties != null)
+            {
+                foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
             query = query.Where<T>(filter);
             return query.FirstOrDefault();
         }

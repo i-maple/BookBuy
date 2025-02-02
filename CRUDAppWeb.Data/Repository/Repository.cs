@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CRUDAppWeb.Data.Repository
 {
-    public class Repository<T> : IRepository<T> where T: class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _db;
         private readonly DbSet<T> dbSet;
@@ -35,9 +35,13 @@ namespace CRUDAppWeb.Data.Repository
             dbSet.RemoveRange(entities);
         }
 
-        IEnumerable<T> IRepository<T>.GetAll(string? includeProperties)
+        IEnumerable<T> IRepository<T>.GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
             IQueryable<T> query = dbSet;
+            if (filter != null)
+            {
+                query.Where<T>(filter);
+            }
             if (includeProperties != null)
             {
                 foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -51,6 +55,7 @@ namespace CRUDAppWeb.Data.Repository
         T IRepository<T>.GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties)
         {
             IQueryable<T> query = dbSet;
+            query = query.Where<T>(filter);
             if (includeProperties != null)
             {
                 foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -58,8 +63,20 @@ namespace CRUDAppWeb.Data.Repository
                     query = query.Include(property);
                 }
             }
-            query = query.Where<T>(filter);
             return query.FirstOrDefault();
+        }
+        Task<T> IRepository<T>.GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter, string? includeProperties)
+        {
+            IQueryable<T> query = dbSet;
+            query = query.Where<T>(filter);
+            if (includeProperties != null)
+            {
+                foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
+            return query.FirstOrDefaultAsync();
         }
     }
 }

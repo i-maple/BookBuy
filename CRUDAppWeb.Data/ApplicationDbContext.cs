@@ -14,12 +14,16 @@ namespace CRUDApp.Data
         public DbSet<CategoryModel> Categories { get; set; }
         public DbSet<CoverType> CoverTypes { get; set; }
         public DbSet<Product> Product { get; set; }
-        public DbSet<ApplicationUser> User { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            //modelBuilder.Entity<ApplicationUser>().;
 
             //modelBuilder.Entity<IdentityUserLogin<string>>()
             //    .HasNoKey();

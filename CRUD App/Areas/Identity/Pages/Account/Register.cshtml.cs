@@ -10,6 +10,8 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using CRUDApp.Data.Repository;
+using CRUDApp.Data.Repository.IRepository;
 using CRUDApp.Models;
 using CRUDApp.Utility;
 using Microsoft.AspNetCore.Authentication;
@@ -17,7 +19,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -32,6 +36,7 @@ namespace CRUD_App.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -39,6 +44,7 @@ namespace CRUD_App.Areas.Identity.Pages.Account
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             RoleManager<IdentityRole> roleManager,
+            IUnitOfWork unitOfWork,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -48,6 +54,7 @@ namespace CRUD_App.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -107,6 +114,21 @@ namespace CRUD_App.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public string Role { get; set; }
+
+            [Display(Name = "Street Address")]
+            public string StreetAddress { get; set; }
+            public string City { get; set; }
+            public string State { get; set; }
+            [Display(Name = "Company")]
+            public int? CompanyId { get; set; }
+
+            [Display(Name = "Phone Number")]
+            public string PhoneNumber { get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> CompanyList { get; set; }
+            public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
 
@@ -122,6 +144,15 @@ namespace CRUD_App.Areas.Identity.Pages.Account
             }
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            Input = new()
+            {
+                CompanyList = _unitOfWork.Company.GetAll().Select(company => new SelectListItem()
+                {
+                    Text = company.Name,
+                    Value = company.Id.ToString(),
+                }),
+                RoleList = _roleManager.Roles.Select(role => new SelectListItem() { Text = role.Name, Value = role.Name, }),
+            };
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -136,11 +167,27 @@ namespace CRUD_App.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
                 user.Name = Input.Name;
+                user.City = Input.City;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.StreetAddress = Input.StreetAddress;
+                user.State = Input.State;
+                
+                if(Input.Role == RolesEnum.Company.ToString())
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
+
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    if (Input.Role == null)
+                    {
+                        await _userManager.AddToRoleAsync(user, Input.Role ?? RolesEnum.Individual.ToString());
+                    }
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

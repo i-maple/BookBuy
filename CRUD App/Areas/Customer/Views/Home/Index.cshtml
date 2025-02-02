@@ -20,7 +20,7 @@
 							<div class="text-white"><span class="text-white h6">List Price:</span> <strike> Rs. @product.Price.ToString("0.00") </strike> </div>
 							<div class="text-white"><span class="text-white h6">As low as</span> Rs. @product.ListPrice.ToString("0.00") </div>
 						</div>
-						<a class="btn btn-primary m-2" asp-action="Details" asp-route-id="@product.Id" >Details</a>
+						<a class="btn btn-primary m-2" asp-action="Details" asp-route-productId="@product.Id" >Details</a>
 					</div>
 				</div>
 			</div>
